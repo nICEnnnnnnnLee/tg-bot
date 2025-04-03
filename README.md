@@ -18,20 +18,20 @@ define('DB_FILE', 'tg.db');             // sqlite db 文件路径
 
 + 禁止访问数据库文件  
 sqlite保存有消息id到用户id的映射，如果不希望被访问，可以通过根据情况禁止访问。
-+ `.htaccess`
-```
-<Files "tg.db">
-  Require all denied
-</Files>
-```
+  + `.htaccess`
+  ```
+  <Files "tg.db">
+    Require all denied
+  </Files>
+  ```
 
-+ nginx配置
-```
-location = /tg.db {
-    deny all;
-    return 403;
-}
-```
+  + nginx配置
+  ```
+  location = /tg.db {
+      deny all;
+      return 403;
+  }
+  ```
 
 + 将`tg_bot.php`拷贝到了特定目录，确保`https://xxx.com/tg_bot.php`能够访问  
     若不能访问，请将`WEBHOOK`修改为能够访问的path
