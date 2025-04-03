@@ -18,7 +18,7 @@ define('WEBHOOK', '/' . $currentFileName);  // WEBHOOK地址，使用该path能�
 + 将`tg_bot.php`拷贝到了特定目录，确保`https://xxx.com/tg_bot.php`能够访问  
     若不能访问，请将`WEBHOOK`修改为能够访问的path
 
-+ 注册webhook
-访问`https://xxx.com/tg_bot.php?do=register`
++ 注册webhook  
+    访问`https://xxx.com/tg_bot.php?do=register`
 
 + 正常使用即可
