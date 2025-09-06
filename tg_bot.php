@@ -6,11 +6,26 @@ $currentFileName = basename($currentFilePath);
 define('ADMIN_UID', 666666);        // 管理员的 Telegram ID，可以从 @userinfobot 获取
 define('BOT_TOKEN', '12345:xxxxxxx'); //  Telegram Bot Token，从 @BotFather 获取
 define('BOT_HEADER_SECRET', '114514'); //  随机字符串，字母 + 数字，用于头部字段X-TELEGRAM-BOT-API-SECRET-TOKEN鉴权
-define('BOT_WELCOME_MSG', 'Welcome to use xxx_bot!'); //  欢迎语句
 // define('WEBHOOK', '/tg_bot.php');
 define('WEBHOOK', '/' . $currentFileName);  // WEBHOOK地址，请使用能够访问到该php的地址
 define('API_URL', 'https://api.telegram.org/bot' . BOT_TOKEN . '/');
 define('DB_FILE', 'tg.db');             // sqlite db 文件路径
+
+// 定义自定义键盘按钮
+$keyboard = [
+    'keyboard' => [
+        ['/help', '/getid']
+    ],
+    'resize_keyboard' => true,
+    'one_time_keyboard' => false
+];
+$help_text = "🤖 *机器人帮助文档*\n\n"
+    . "/start - 显示本帮助文档\n"
+    . "/help - 显示本帮助文档\n"
+    . "/getid - 返回您的数字用户ID\n"
+    . "发送其它内容会将消息转发给admin\n"
+    . "\n点击下面菜单按钮快速发送命令。";
+
 
 if (isset($_GET['do'])) {
   $do = htmlspecialchars($_GET['do']); // 转义特殊字符
@@ -105,9 +120,13 @@ function setId($msg_id, $user_id){
 }
 
 function handleMessage($message) {
-    if($message['text'] == '/start'){
-        global $headers;
-        sendMessage($message['chat']['id'], BOT_WELCOME_MSG);
+    if($message['text'] == '/start' || $message['text'] == '/help'){
+        global $help_text;
+        sendMessage($message['chat']['id'], $help_text);
+    }else if($message['text'] == '/getid'){
+        $user_id = $message['from']['id'] ?? null;
+        $reply_msg =  "您的ID是：`$user_id`";
+        sendMessage($message['chat']['id'], $reply_msg);
     }else if($message['chat']['id'] == ADMIN_UID){
         // 如果是管理员转发的消息
         if (isset($message['reply_to_message']) && isset($message['reply_to_message']['chat']) ){
@@ -137,7 +156,10 @@ function handleMessage($message) {
 }
 
 function reqTG($method, $data) {
+    global $keyboard;
     $url = API_URL . $method;
+    $data['reply_markup'] = json_encode($keyboard);
+    $data['parse_mode'] = 'Markdown';
     $options = [
         'http' => [
             'method'  => 'POST',
@@ -207,4 +229,6 @@ function deleteWebhook() {
 }
 
 ?>
+
+
 
